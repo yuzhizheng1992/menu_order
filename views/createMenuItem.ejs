@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        <%= title%>
+    </title>
+    <link rel="stylesheet" href="style.css">   
+</head>
+<body>
+    <h1>編輯菜單</h1>
+
+    <div class="test">
+        <ul class="drop-down-menu">
+            <li>
+                <a href="">菜單系統</a>
+                <ul>
+                    <li>
+                        <a href="createMenu">上傳菜單</a>
+                    </li>
+                    <li>
+                        <a href="editmenu">編輯菜單</a>
+                    </li> 
+                    <li>
+                        <a href="assignmenu">指派菜單</a>
+                    </li> 
+                </ul>
+            </li>
+                <li>
+                    <a href="/pickmenu">開始點餐</a>
+                </li>         
+    
+                <li>
+                    <a href="">會員管理</a>
+                    <ul><% if(nickname==null){ %>
+                        <li><a href="/login">會員登入</a></li>
+                        <li><a href="/signup">會員註冊</a></li>
+                        <%}else{%>
+                        <li><a href="/logout">會員登出</a></li>
+                        <%} %>                    
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    <div class="input-box">
+    <form class="form"  method="post">   
+    <table class="table" >
+        <div name='restauartName' id="restauartName">
+            <h2>餐廳名稱:<%=Name%> </h2>
+        </div>
+        <tr>
+            <th>品名</th>
+            <th>數量</th>
+            <th>單位</th>
+            <th>價格</th>
+        </tr>  
+        <tr>
+            <td><input class="btn" type="text" id="item1" name="item1"></td>            
+            <td><input class="btn" style="width: 60px;" type="text" id="num1" name="num1"></td>
+            <td><input class="btn" style="width: 60px;" type="text" id="unit1" name="unit1"></td>
+            <td><input class="btn" style="width: 60px;" type="text" id="price1" name="price1"></td>
+        </tr>         
+        <div class="btn-group">
+            <td><input class="btn" type="button" id="add"  value="新增" />       
+        </div>
+    </table>
+    
+    </form>
+    </div>
+    <div class="input-box">
+        <form class="form" >            
+                <H2>餐點內容 </H2>
+                <ul name="aaa" id="list">
+                    <% if(result.length==0){%>
+                        <li>  請新增品名 </li>
+                        <% } else{%>
+                    <% for(i=0;i<result.length;i++) { %>
+                        <li ><%= result[i].item %> <%= result[i].num %><%= result[i].unit %> <%= result[i].price %>元 <input class="delete" id="list" type="button" data-id="<%= result[i]._id %>" value="刪除"></li>
+                    <% } %>
+                    <% } %>            
+                </ul>
+                <ul id="list"></ul>      
+                <a class="link" href="/assignmenu" type="button" value="完成">完成</a>    
+        </form>
+        
+    </div>>
+   
+</body>
+<script>
+    var add = document.getElementById('add') 
+    var list = document.getElementById('list')
+    
+    add.addEventListener('click',function(e){
+                
+        //取得餐廳名稱
+        var urlParams = new URLSearchParams(window.location.search);
+        var Name = urlParams.get('Name');
+        
+        //檢查欄位空白
+        if(item1.value ==""){
+            alert("請輸入品名");
+            return;
+        }else{
+            if(num1.value ==""){
+                alert("請輸入數量");
+        }else{
+            if(price1.value ==""){
+                alert("請輸入價格"); 
+        }else{
+            if(unit1.value ==""){
+                alert("請輸入單位");
+            }
+            }
+            }        
+        }
+        /////        
+        var xhr =new XMLHttpRequest();
+        xhr.open('post',"/createMenuItem",true);
+        xhr.setRequestHeader('Content-type', 'application/json');
+        var Menu_data = JSON.stringify({'restauartName':Name,'item1':item1.value,'unit1':unit1.value,'price1':price1.value,'num1':num1.value});     //傳送值到後端   
+        xhr.send(Menu_data);         
+        xhr.onload = function(){               
+            var Oridata = JSON.parse(xhr.response);
+            var data = Oridata.result; 
+            if(Oridata.success == false){ 
+                alert(Oridata.message)
+                return;
+            };                  
+            var str = '';            
+            for(i=0;i<data.length;i++){
+                str+='<li>'+data[i].item+' '+data[i].num+data[i].unit+' '+data[i].price+'元 '+'<input id="list" type="button" value="刪除" data-id="' + data[i]._id +'" '+'value="刪除">'+'</li>';
+            }
+            list.innerHTML = str;
+        }        
+        
+    })  
+
+    list.addEventListener('click',function(e){
+        var urlParams = new URLSearchParams(window.location.search);
+        var Name = urlParams.get('Name');
+        var id =e.target.dataset.id;
+        var xhr =new XMLHttpRequest();
+        xhr.open('post', '/deleteMenuItem');
+        xhr.setRequestHeader('Content-type','application/json')
+        var delete_id = JSON.stringify({'restauartName':Name,"id":id});
+        xhr.send(delete_id);
+        console.log(xhr)
+        xhr.onload = function(){               
+            var Oridata = JSON.parse(xhr.response);
+            var data = Oridata.result; 
+            if(Oridata.success == false){ 
+                alert(Oridata.message)
+                return;
+            };                  
+            var str = '';    
+            if(data.length==0){
+                str ='<li>' + '請新增品名' + '</li>';
+                list.innerHTML = str;
+            }    
+            for(i=0;i<data.length;i++){
+                str+='<li>'+data[i].item+' '+data[i].num+data[i].unit+' '+data[i].price+'元 '+'<input class="delete" id="list" type="button" value="刪除" data-id="' + data[i]._id +'" '+'value="刪除">'+'</li>';
+            
+            if(Oridata.result==null){
+                str ='請新增品名';                
+            }   
+            list.innerHTML = str;
+            }
+        }
+    })
+</script>
+
+</html>

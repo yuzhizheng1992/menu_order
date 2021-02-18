@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        <%= title %>
+    </title>   
+    <link rel="stylesheet" href="style.css">   
+</head>
+
+<body>
+    <h1>點餐系統</h1>
+    <div class="test">
+        <ul class="drop-down-menu">
+            <li>
+                <a href="#">菜單系統</a>
+                <ul>
+                    <li>
+                        <a href="createMenu">上傳菜單</a>
+                    </li>
+                    <li>
+                        <a href="editmenu">編輯菜單</a>
+                    </li> 
+                    <li>
+                        <a href="assignmenu">指派菜單</a>
+                    </li> 
+                </ul>
+            </li>
+                <li>
+                    <a href="/pickmenu">開始點餐</a>
+                </li>         
+    
+                <li>
+                    <a href="">會員管理</a>
+                    <ul><% if(nickname==null){ %>
+                        <li><a href="/login">會員登入</a></li>
+                        <li><a href="/signup">會員註冊</a></li>
+                        <%}else{%>
+                        <li><a href="/logout">會員登出</a></li>
+                        <%} %>                    
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+    
+
+
+
+    <div class="input-box">
+        <form class="form" action="/login" method="post">
+            <h2>會員登入</h2>
+            <div class="group">
+                <label>帳號:</label>
+                <input type="text" name="user_id" />
+            </div>
+            <div class="group">
+                <label >密碼:</label>
+                <input type="password" name="password" />
+            </div>
+            <div class="btn-group">
+                <input class="btn" type="submit" value="登入" />
+                <input class="btn" type="submit" value="忘記密碼" />
+                <input class="btn" onclick="javascript:location.href='/signup'" type="button" value="註冊會員" />
+            </div>
+        </form>
+    </div>
+</body>
+</html>

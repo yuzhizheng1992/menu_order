@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>
+        <%= title %>
+    </title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>點餐系統</h1>
+    <div class="test">
+        <ul class="drop-down-menu">
+            <li>
+                <a href="">菜單系統</a>
+                <ul>
+                    <li>
+                        <a href="createMenu">上傳菜單</a>
+                    </li>
+                    <li>
+                        <a href="editmenu">編輯菜單</a>
+                    </li> 
+                    <li>
+                        <a href="assignmenu">指派菜單</a>
+                    </li> 
+                </ul>
+            </li>
+                <li>
+                    <a href="/pickmenu">開始點餐</a>
+                </li>         
+    
+                <li>
+                    <a href="">會員管理</a>
+                    <ul><% if(nickname==null){ %>
+                        <li><a href="/login">會員登入</a></li>
+                        <li><a href="/signup">會員註冊</a></li>
+                        <%}else{%>
+                        <li><a href="/logout">會員登出</a></li>
+                        <%} %>                    
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    <div class="input-box">
+    <form action="/assignmenu" method="post">
+        <h2>請挑選點餐時段</h2>
+        <div class="pick-order">
+            <ul name="aaa">
+        <% if(result.length==0){%>
+            <li>  目前所有時段無指派任何菜單 </li>
+            <% } else{%>
+        <% for(i=0;i<result.length;i++) { %>
+            <li >時間:<%= result[i].Date %>  <%= result[i].Time %>   餐廳:<%= result[i].Restaurant %>  <input class="delete" id="list" data-Date="<%= result[i].Date %>" data-Time="<%= result[i].Time %>" data-Restaurant="<%= result[i].Restaurant %>" onclick="javascript:location.href='/Menu?ID=<%=result[i]._id %>&Res=<%= result[i].Restaurant %>&Date=<%= result[i].Date %>&Time=<%= result[i].Time %>'" type="button" data-id="<%= result[i]._id %>" value="開始點餐"></li>
+        <% } %>
+        <% } %>   
+            </ul>
+        </div>>
+    </form>
+    </div>
+</body>
+
+</html>
